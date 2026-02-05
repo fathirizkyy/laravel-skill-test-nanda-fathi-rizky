@@ -12,7 +12,10 @@ class PostsController extends Controller
      public function index()
     {
         //
-        $post=Post::with('user')->active()->paginate(20);
+        $post=Post::with('user')
+    ->where('is_draft', false)
+    ->where('published_at', '<=', now())
+    ->paginate(20);
         return response()->json([
             'data'=>$post->items(),
             'meta'=>[
@@ -26,7 +29,10 @@ class PostsController extends Controller
 
      public function show(string $id)
     {
-        $post = Post::with('user')->active()->find($id);
+        $post = Post::with('user')
+            ->where('is_draft', false)
+            ->where('published_at', '<=', now())
+            ->find($id);
         if (!$post) {
             return response()->json(['message' => 'Post not found'], 404);
         };
